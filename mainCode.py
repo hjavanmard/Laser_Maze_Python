@@ -1,19 +1,25 @@
 import sys
-from mazeDraw import *
+from mazeDraw import *  # mazeDraw is a helper module to visualize maze
+
+# we treat lazer beam as a seperate object. This makes easier to add features specific
+# to lazer beam. One can even create more than one lazer beam with less effort.
 class beam:
     def __init__(self,position,direction):
-        self.position=position
+        self.position=position # initial position of laser
         self.next={'S':[0,-1],'N':[0,1],'E':[1,0],'W':[-1,0]}
-        self.direction=self.next[direction]
-        self.counter=0
-        self.bounce=dict()
-        self.path=[[position[0],position[1]]]
-        self.loop=False
+        self.direction=self.next[direction] # the initial direction of player
+        self.counter=0	    # the number of squers traveled by laser
+        self.bounce=dict()   # stores positions where laser is bounced--> to check if laser is traped in a loop or not
+        self.path=[[position[0],position[1]]] # stores path of laser for visualization fxn
+        self.loop=False # a simple boolean variable to check if the laser is caught up in a loop
     def update_pos(self,position):
+        # a helper function to update position
         self.position=position
     def beam_pos(self):
+        # returns position of laser at anytime
         return self.position
     def move_next(self):
+        # moves laser to the next square
         self.position[0] +=self.direction[0]
         self.position[1] +=self.direction[1]
         self.path.append([self.position[0],self.position[1]])
@@ -37,7 +43,6 @@ class beam:
     def check_next(self,width,height):
         new_x_pos=self.position[0]+self.direction[0]
         new_y_pos=self.position[1]+self.direction[1]
-        print self.position
         if  new_x_pos<0 or new_x_pos>width-1 or new_y_pos<0 or new_y_pos>height-1:
             return False
         else:
@@ -80,7 +85,6 @@ class maze_grid:
             
     def fire(self):
         while self.laser.check_next(self.width,self.height):
-            print 'x'
             self.laser.move_next()
             if tuple(self.laser.beam_pos()) in self.mirrors:
                 mirror=self.mirrors[tuple(self.laser.beam_pos())]
@@ -88,6 +92,7 @@ class maze_grid:
                     self.laser.output(self.file_out,True)
                     return
         self.laser.output(self.file_out,False)
+    # draw is just a simple helper drawer on command line env
     def draw(self):
         for h in range(self.height):
             print self.height-1-h,
@@ -102,6 +107,7 @@ class maze_grid:
         for w in range(self.width):
             print w,
         print
+    # visualize function is a helper function to visualize maze with laser path
     def visualize(self):
         root = Tk()
         maze= make_maze(root,self.width,self.height,self.player_pos,
