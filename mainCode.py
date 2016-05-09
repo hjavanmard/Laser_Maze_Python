@@ -1,5 +1,5 @@
 import sys
-from kinter import *
+from mazeDraw import *
 class beam:
     def __init__(self,position,direction):
         self.position=position
